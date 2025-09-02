@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multimedia Catalogue</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --teal: #008080;
+            --yellow: #FFD700;
+            --off-white: #F5F5F5;
+        }
+
+        body {
+            background-color: var(--off-white);
+        }
+
+        .video-background {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .video-background video {
+            position: absolute;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -1;
+            object-fit: cover;
+        }
+
+        .hero-content {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            border: 2px solid var(--teal);
+        }
+
+        .category-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .category-icon {
+            font-size: 3rem;
+            color: var(--teal);
+            margin-bottom: 1rem;
+        }
+
+        .modal-content {
+            background-color: var(--off-white);
+        }
+
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            padding: 1.5rem;
+        }
+
+        .media-item {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+
+        .media-item:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-primary {
+            background-color: var(--teal);
+            border-color: var(--teal);
+        }
+
+        .btn-primary:hover {
+            background-color: darken(var(--teal), 10%);
+        }
+
+        .navbar {
+            background-color: var(--teal);
+        }
+
+        .navbar-brand {
+            color: var(--yellow) !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">Multimedia Catalogue</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#categories">Categories</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section with Video Background -->
+    <section id="home" class="video-background">
+        <video autoplay muted loop>
+            <source src="/api/placeholder/1920/1080" type="video/mp4">
+        </video>
+        <div class="hero-content">
+            <h1 class="display-4 mb-4">Welcome to Our Multimedia Library</h1>
+            <p class="lead mb-4">Explore our vast collection of documents, audio, pictures, and videos</p>
+            <a href="#categories" class="btn btn-primary btn-lg">Browse Categories</a>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section id="categories" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Browse by Category</h2>
+            <div class="category-grid">
+                <div class="category-card" data-category="documents">
+                    <i class="fas fa-file-alt category-icon"></i>
+                    <h3>Documents</h3>
+                    <p>Access our collection of important documents</p>
+                </div>
+                <div class="category-card" data-category="audio">
+                    <i class="fas fa-headphones category-icon"></i>
+                    <h3>Audio</h3>
+                    <p>Listen to our audio collection</p>
+                </div>
+                <div class="category-card" data-category="pictures">
+                    <i class="fas fa-image category-icon"></i>
+                    <h3>Pictures</h3>
+                    <p>Browse our image gallery</p>
+                </div>
+                <div class="category-card" data-category="video">
+                    <i class="fas fa-video category-icon"></i>
+                    <h3>Video</h3>
+                    <p>Watch our video content</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Media Item Modal -->
+    <div class="modal fade" id="mediaModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Content will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

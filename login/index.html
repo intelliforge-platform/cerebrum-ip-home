@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Dashboard Login</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            height: 100vh;
+        }
+        .login-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        .btn-login {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-login:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+        .news-ticker {
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container h-100">
+        <div class="row h-100 justify-content-center align-items-center">
+            <div class="col-md-6">
+                <div class="login-container p-5">
+                    <div class="text-center mb-4">
+                        <img src="file:///C|/Users/iSP Hub/Documents/CIPS FILES/intelliforge-1.0.0/login/images/logo155x155.jpg" alt="Company Logo" class="img-fluid">
+                    </div>
+                    <h2 class="text-center mb-4">Dashboard Login</h2>
+                    <form id="loginForm">
+                        <div class="mb-3">
+                          <label for="email" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="userType" class="form-label">User Type</label>
+                            <select class="form-select" id="userType" required>
+                                <option value="">Select user type</option>
+                                <option value="client">Client</option>
+                                <option value="partner">Partner</option>
+                                <option value="investor">Investor</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-login btn-lg w-100">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="news-ticker">
+        <div class="ticker-content">
+            Loading world news...
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const userType = document.getElementById('userType').value;
+            
+            // Here you would typically send this data to your backend for authentication
+            console.log('Login attempt:', { email, userType });
+            
+            // For demonstration, we'll just redirect based on user type
+            switch(userType) {
+                case 'client':
+                    window.location.href = 'client-dashboard.html';
+                    break;
+                case 'partner':
+                    window.location.href = 'partner-dashboard.html';
+                    break;
+                case 'investor':
+                    window.location.href = 'investor-dashboard.html';
+                    break;
+                default:
+                    alert('Please select a user type');
+            }
+        });
+
+        // Simulated news ticker
+        const newsItems = [
+            "Global markets show strong growth",
+            "New technological breakthrough in renewable energy",
+            "International trade agreements set to boost economy",
+            "Startups driving innovation in AI and machine learning"
+        ];
+        let newsIndex = 0;
+        setInterval(() => {
+            document.querySelector('.ticker-content').textContent = newsItems[newsIndex];
+            newsIndex = (newsIndex + 1) % newsItems.length;
+        }, 5000);
+    </script>
+</body>
+</html>

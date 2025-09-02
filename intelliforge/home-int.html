@@ -1,0 +1,1884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntelliForge - Enterprise Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #1842B6;
+            --black: #000103;
+            --success-green: #26D48C;
+            --accent-pink: #D6409F;
+            --white: #FFFFFF;
+            
+            /* New Light Slate Gray Color Scheme */
+            --light-slate-gray: #778899;
+            --darker-slate: #2F4F4F;
+            --lighter-slate: #B0C4DE;
+            --slate-card: #4682B4;
+            --slate-bg: #F8F8FF;
+            --slate-text: #2F4F4F;
+            --slate-border: #B0C4DE;
+            
+            --gradient-primary: linear-gradient(135deg, #1842B6 0%, #26D48C 100%);
+            --gradient-secondary: linear-gradient(135deg, #D6409F 0%, #1842B6 100%);
+            --gradient-slate: linear-gradient(135deg, #778899 0%, #4682B4 100%);
+            --fire-gradient: linear-gradient(45deg, #ff6b35, #f7931e, #ffcc02, #ff6b35);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--slate-bg);
+            color: var(--slate-text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Screen Container */
+        .screen {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Enhanced Splash Screen */
+        .splash-screen {
+            height: 100vh;
+            background: linear-gradient(135deg, var(--darker-slate) 0%, var(--light-slate-gray) 50%, var(--slate-card) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .splash-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 107, 53, 0.15) 0%, transparent 70%);
+            animation: fireGlow 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes fireGlow {
+            0% { opacity: 0.3; transform: scale(1); }
+            100% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        .logo-container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo-real {
+            width: 160px;
+            height: 160px;
+            margin: 0 auto 40px;
+            position: relative;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: logoFloat 6s ease-in-out infinite;
+        }
+
+        .logo-real img {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            filter: drop-shadow(0 0 30px rgba(24, 66, 182, 0.6));
+            animation: logoGlow 3s ease-in-out infinite alternate;
+        }
+
+        .logo-real::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            right: -15px;
+            bottom: -15px;
+            background: var(--fire-gradient);
+            border-radius: 50%;
+            z-index: -1;
+            animation: fireRing 4s linear infinite;
+            opacity: 0.7;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes logoGlow {
+            0% { filter: drop-shadow(0 0 20px rgba(24, 66, 182, 0.4)); }
+            100% { filter: drop-shadow(0 0 40px rgba(24, 66, 182, 0.8)) drop-shadow(0 0 60px rgba(214, 64, 159, 0.4)); }
+        }
+
+        @keyframes fireRing {
+            0% { transform: rotate(0deg) scale(1); opacity: 0.7; }
+            50% { transform: rotate(180deg) scale(1.05); opacity: 0.9; }
+            100% { transform: rotate(360deg) scale(1); opacity: 0.7; }
+        }
+
+        .welcome-text {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #ffffff, #26D48C, #1842B6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textShimmer 3s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+
+        .tagline {
+            font-size: 22px;
+            opacity: 0.9;
+            font-style: italic;
+            color: var(--lighter-slate);
+            animation: taglineGlow 4s ease-in-out infinite alternate;
+            letter-spacing: 1px;
+        }
+
+        @keyframes textShimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes taglineGlow {
+            0% { color: var(--lighter-slate); text-shadow: 0 0 10px rgba(176, 196, 222, 0.3); }
+            100% { color: #ffffff; text-shadow: 0 0 20px rgba(255, 255, 255, 0.6); }
+        }
+
+        .enter-button {
+            margin-top: 50px;
+            padding: 18px 40px;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 25px rgba(24, 66, 182, 0.3);
+        }
+
+        .enter-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(24, 66, 182, 0.4);
+        }
+
+        /* Enhanced Login Screen */
+        .login-screen {
+            min-height: 100vh;
+            background: var(--slate-bg);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .login-left {
+            background: var(--gradient-slate);
+            padding: 60px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: white;
+        }
+
+        .login-right {
+            padding: 60px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: white;
+            box-shadow: -10px 0 30px rgba(119, 136, 153, 0.2);
+        }
+
+        .user-type-selector {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-bottom: 35px;
+        }
+
+        .user-type-btn {
+            padding: 15px 8px;
+            border: 2px solid var(--slate-border);
+            background: white;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--slate-text);
+            transition: all 0.3s ease;
+        }
+
+        .user-type-btn:hover {
+            border-color: var(--primary-blue);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(24, 66, 182, 0.2);
+        }
+
+        .user-type-btn.active {
+            border-color: var(--primary-blue);
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 8px 25px rgba(24, 66, 182, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--slate-text);
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid var(--slate-border);
+            border-radius: 10px;
+            font-size: 14px;
+            background: white;
+            color: var(--slate-text);
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(24, 66, 182, 0.1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 18px;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(24, 66, 182, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(24, 66, 182, 0.4);
+        }
+
+        /* Enhanced Dashboard */
+        .dashboard-screen {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+            background: var(--slate-bg);
+        }
+
+        .sidebar {
+            background: linear-gradient(180deg, var(--darker-slate) 0%, var(--light-slate-gray) 100%);
+            color: white;
+            padding: 30px 20px;
+            box-shadow: 5px 0 20px rgba(119, 136, 153, 0.2);
+        }
+
+        .sidebar-logo {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .sidebar-logo img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 10px rgba(24, 66, 182, 0.5));
+        }
+
+        .nav-item {
+            padding: 15px 20px;
+            margin: 8px 0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: var(--gradient-primary);
+            box-shadow: 0 6px 20px rgba(24, 66, 182, 0.3);
+        }
+
+        .main-content {
+            padding: 40px;
+            background: var(--slate-bg);
+            overflow-y: auto;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(119, 136, 153, 0.1);
+            border: 1px solid var(--slate-border);
+        }
+
+        .status-badge {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-size: 12px;
+            font-weight: 600;
+            animation: statusGlow 3s ease-in-out infinite alternate;
+            box-shadow: 0 4px 15px rgba(38, 212, 140, 0.3);
+        }
+
+        @keyframes statusGlow {
+            0% { box-shadow: 0 4px 15px rgba(38, 212, 140, 0.3); }
+            100% { box-shadow: 0 6px 25px rgba(38, 212, 140, 0.5); }
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .dashboard-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(119, 136, 153, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid var(--slate-border);
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(119, 136, 153, 0.2);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Usage Limits Display */
+        .usage-limits {
+            background: #f0f8ff;
+            border: 2px solid var(--lighter-slate);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .usage-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--slate-text);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .usage-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .usage-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid var(--slate-border);
+        }
+
+        .usage-bar {
+            width: 100px;
+            height: 8px;
+            background: var(--slate-border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-left: 10px;
+        }
+
+        .usage-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+
+        .usage-fill.low { background: var(--success-green); }
+        .usage-fill.medium { background: #ffc107; }
+        .usage-fill.high { background: #dc3545; }
+
+        /* Idea Capture Interface */
+        .capture-interface {
+            padding: 40px;
+        }
+
+        .capture-modes {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .capture-mode {
+            background: white;
+            border: 3px solid var(--slate-border);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .capture-mode:hover {
+            border-color: var(--primary-blue);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(24, 66, 182, 0.2);
+        }
+
+        .capture-mode.active {
+            border-color: var(--primary-blue);
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .capture-editor {
+            background: white;
+            border: 2px solid var(--slate-border);
+            border-radius: 15px;
+            min-height: 500px;
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 2px solid var(--slate-border);
+            background: #f8f9fa;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .editor-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-btn {
+            padding: 10px 15px;
+            border: 1px solid var(--slate-border);
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .control-btn:hover {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        .control-btn.active {
+            background: var(--success-green);
+            color: white;
+            border-color: var(--success-green);
+        }
+
+        .editor-content {
+            flex: 1;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .editor-status {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-top: 2px solid var(--slate-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .progress-container {
+            flex: 1;
+            margin: 0 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: var(--slate-border);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        /* Vault System */
+        .vaults-showcase {
+            padding: 40px;
+            background: var(--slate-bg);
+        }
+
+        .vaults-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .vault-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(119, 136, 153, 0.1);
+            transition: all 0.3s ease;
+            border: 2px solid var(--slate-border);
+        }
+
+        .vault-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(119, 136, 153, 0.2);
+        }
+
+        .vault-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+            animation: avatarGlow 3s ease-in-out infinite alternate;
+            position: relative;
+        }
+
+        .bronze-avatar { 
+            background: linear-gradient(135deg, #cd7f32, #b8860b);
+            box-shadow: 0 0 30px rgba(205, 127, 50, 0.5);
+        }
+        .silver-avatar { 
+            background: linear-gradient(135deg, #c0c0c0, #a8a8a8);
+            box-shadow: 0 0 30px rgba(192, 192, 192, 0.5);
+        }
+        .gold-avatar { 
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+        .diamond-avatar { 
+            background: linear-gradient(135deg, #b9f2ff, #87ceeb);
+            box-shadow: 0 0 30px rgba(135, 206, 235, 0.5);
+        }
+
+        @keyframes avatarGlow {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        .vault-limits {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 12px;
+            color: var(--slate-text);
+            text-align: left;
+        }
+
+        .vault-price {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin: 10px 0;
+        }
+
+        /* Admin Dashboard */
+        .admin-dashboard {
+            padding: 40px;
+            background: var(--slate-bg);
+        }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .admin-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(119, 136, 153, 0.1);
+            border: 1px solid var(--slate-border);
+        }
+
+        .deposits-queue {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .deposit-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid var(--slate-border);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .deposit-item:hover {
+            border-color: var(--primary-blue);
+            background: #f8f9fa;
+        }
+
+        .deposit-badge {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .prince-badge { background: #c0c0c0; }
+        .queens-badge { background: #ffd700; }
+        .kings-badge { background: #87ceeb; }
+
+        .metadata-display {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: var(--slate-text);
+            border: 1px solid var(--slate-border);
+        }
+
+        /* Ideas Bank */
+        .ideas-bank {
+            padding: 40px;
+            background: var(--slate-bg);
+        }
+
+        .search-filters {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .search-input, .filter-select {
+            padding: 15px;
+            border: 2px solid var(--slate-border);
+            border-radius: 12px;
+            background: white;
+            color: var(--slate-text);
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .ideas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 25px;
+        }
+
+        .idea-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(119, 136, 153, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid var(--slate-border);
+        }
+
+        .idea-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(119, 136, 153, 0.2);
+        }
+
+        .idea-thumbnail {
+            height: 180px;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .idea-content {
+            padding: 25px;
+        }
+
+        .idea-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: var(--light-slate-gray);
+        }
+
+        /* Upgrade Modal */
+        .upgrade-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .upgrade-modal.show {
+            display: flex;
+        }
+
+        .upgrade-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .upgrade-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--gradient-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: white;
+            margin: 0 auto 20px;
+        }
+
+        /* Back Button & Notifications */
+        .back-btn {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            background: white;
+            border: 2px solid var(--primary-blue);
+            color: var(--primary-blue);
+            padding: 12px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(119, 136, 153, 0.2);
+        }
+
+        .back-btn:hover {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .notification {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: var(--gradient-primary);
+            color: white;
+            padding: 18px 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(24, 66, 182, 0.3);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.4s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .login-screen,
+            .dashboard-screen {
+                grid-template-columns: 1fr;
+            }
+
+            .user-type-selector {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .vaults-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .capture-modes {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-filters {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Notification Container -->
+    <div id="notification" class="notification">Action completed successfully!</div>
+
+    <!-- Upgrade Modal -->
+    <div id="upgradeModal" class="upgrade-modal">
+        <div class="upgrade-content">
+            <div class="upgrade-icon">⚡</div>
+            <h2 style="color: var(--slate-text); margin-bottom: 15px;">Usage Limit Reached!</h2>
+            <p style="color: var(--light-slate-gray); margin-bottom: 25px;">You've reached your <span id="currentTier">Bronze</span> tier limit. Upgrade to continue capturing ideas.</p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button class="btn-primary" onclick="upgradeAccount()">Upgrade Now</button>
+                <button class="control-btn" onclick="closeUpgradeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <button id="backBtn" class="back-btn" style="display: none;">← Back</button>
+
+    <!-- Splash Screen -->
+    <div id="splashScreen" class="screen active">
+        <div class="splash-screen">
+            <div class="logo-container">
+                <div class="logo-real">
+                    <img src="/assets/images/logo/logo.png' width='128' height='128' viewBox='0 0 128 128'%3E%3Ccircle cx='64' cy='64' r='60' fill='%231842B6'/%3E%3Ctext x='64' y='75' text-anchor='middle' fill='white' font-size='36' font-weight='bold'%3EIF%3C/text%3E%3C/svg%3E" alt="IntelliForge Logo" id="splashLogo">
+                </div>
+                <div class="welcome-text">Welcome to IntelliForge</div>
+                <div class="tagline">...from raw ideas to tangible marketable assets</div>
+                <button class="enter-button" onclick="showLogin()">Enter Platform</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen">
+        <div class="login-screen">
+            <div class="login-left">
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 30px;">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 128 128'%3E%3Ccircle cx='64' cy='64' r='60' fill='%231842B6'/%3E%3Ctext x='64' y='75' text-anchor='middle' fill='white' font-size='36' font-weight='bold'%3EIF%3C/text%3E%3C/svg%3E" alt="IntelliForge" style="width: 64px; height: 64px; border-radius: 50%;">
+                    <h2 style="font-size: 32px;">IntelliForge</h2>
+                </div>
+                <h3 style="font-size: 28px; margin-bottom: 25px;">Join the Innovation Revolution</h3>
+                <p style="font-size: 18px; line-height: 1.7; opacity: 0.9;">Transform your raw ideas into marketable assets with our AI-powered enterprise platform.</p>
+                <ul style="margin-top: 40px; list-style: none;">
+                    <li style="margin: 15px 0; display: flex; align-items: center; gap: 12px;">
+                        <span style="color: var(--success-green); font-size: 18px;">✓</span>
+                        <span>Multi-modal idea capture & editing</span>
+                    </li>
+                    <li style="margin: 15px 0; display: flex; align-items: center; gap: 12px;">
+                        <span style="color: var(--success-green); font-size: 18px;">✓</span>
+                        <span>Tiered subscription system</span>
+                    </li>
+                    <li style="margin: 15px 0; display: flex; align-items: center; gap: 12px;">
+                        <span style="color: var(--success-green); font-size: 18px;">✓</span>
+                        <span>Global marketplace & IP protection</span>
+                    </li>
+                    <li style="margin: 15px 0; display: flex; align-items: center; gap: 12px;">
+                        <span style="color: var(--success-green); font-size: 18px;">✓</span>
+                        <span>Enterprise-grade security</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="login-right">
+                <h3 style="margin-bottom: 25px; color: var(--slate-text); font-size: 24px;">Select Account Type</h3>
+                <div class="user-type-selector">
+                    <div class="user-type-btn active" onclick="selectUserType(this, 'client')">Client</div>
+                    <div class="user-type-btn" onclick="selectUserType(this, 'investor')">Investor</div>
+                    <div class="user-type-btn" onclick="selectUserType(this, 'partner')">Partner</div>
+                    <div class="user-type-btn" onclick="selectUserType(this, 'guest')">Guest</div>
+                    <div class="user-type-btn" onclick="selectUserType(this, 'admin')">Admin</div>
+                </div>
+                <form onsubmit="login(event)">
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" placeholder="Enter your email address" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Sign In to IntelliForge</button>
+                </form>
+                <div style="text-align: center; margin-top: 25px;">
+                    <a href="#" style="color: var(--primary-blue); text-decoration: none; font-weight: 500;">Don't have an account? Register here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Screen -->
+    <div id="dashboardScreen" class="screen">
+        <div class="dashboard-screen">
+            <div class="sidebar">
+                <div class="sidebar-logo">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 128 128'%3E%3Ccircle cx='64' cy='64' r='60' fill='%231842B6'/%3E%3Ctext x='64' y='75' text-anchor='middle' fill='white' font-size='36' font-weight='bold'%3EIF%3C/text%3E%3C/svg%3E" alt="IntelliForge">
+                    <div style="font-size: 18px; font-weight: bold;">IntelliForge</div>
+                </div>
+                <div class="nav-item active" onclick="switchDashboardView('dashboard')">
+                    <span>📊</span> Dashboard
+                </div>
+                <div class="nav-item" onclick="switchDashboardView('profile')">
+                    <span>👤</span> Profile
+                </div>
+                <div class="nav-item" onclick="switchDashboardView('ideas')">
+                    <span>💡</span> My Ideas
+                </div>
+                <div class="nav-item" onclick="showIdeasBank()">
+                    <span>🏦</span> Ideas Bank
+                </div>
+                <div class="nav-item" onclick="showIdeaCapture()">
+                    <span>🎤</span> Capture Idea
+                </div>
+                <div class="nav-item" onclick="showVaultSystem()">
+                    <span>🏛️</span> Vault System
+                </div>
+                <div class="nav-item" onclick="showAdminPanel()">
+                    <span>⚙️</span> Admin Panel
+                </div>
+                <div class="nav-item" onclick="switchDashboardView('payments')">
+                    <span>💳</span> Payments
+                </div>
+            </div>
+            <div class="main-content">
+                <div id="dashboardContent">
+                    <!-- Usage Limits Display -->
+                    <div class="usage-limits">
+                        <div class="usage-title">
+                            <span>📊</span>
+                            <span id="tierTitle">Gold Tier Usage Limits</span>
+                        </div>
+                        <div class="usage-grid">
+                            <div class="usage-item">
+                                <span>Voice Recording</span>
+                                <div>
+                                    <span id="voiceUsage">28/45 min</span>
+                                    <div class="usage-bar">
+                                        <div class="usage-fill medium" id="voiceFill" style="width: 62%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="usage-item">
+                                <span>Video Recording</span>
+                                <div>
+                                    <span id="videoUsage">15/45 min</span>
+                                    <div class="usage-bar">
+                                        <div class="usage-fill low" id="videoFill" style="width: 33%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="usage-item">
+                                <span>Text Pages</span>
+                                <div>
+                                    <span id="textUsage">7/12 pages</span>
+                                    <div class="usage-bar">
+                                        <div class="usage-fill medium" id="textFill" style="width: 58%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="usage-item">
+                                <span>Images</span>
+                                <div>
+                                    <span id="imageUsage">11/15 images</span>
+                                    <div class="usage-bar">
+                                        <div class="usage-fill high" id="imageFill" style="width: 73%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="usage-item">
+                                <span>Sketch Pages</span>
+                                <div>
+                                    <span id="sketchUsage">2/5 pages</span>
+                                    <div class="usage-bar">
+                                        <div class="usage-fill low" id="sketchFill" style="width: 40%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-header">
+                        <div>
+                            <h2 style="color: var(--slate-text); font-size: 28px;">Welcome back, <span id="userName">John</span>!</h2>
+                            <p style="color: var(--light-slate-gray); font-size: 16px; margin-top: 8px;">Here's what's happening with your ideas today.</p>
+                        </div>
+                        <div class="status-badge" id="statusBadge">Gold Member</div>
+                    </div>
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card" onclick="showIdeaCapture()">
+                            <div class="card-icon" style="background: var(--gradient-primary);">💡</div>
+                            <h3 style="color: var(--slate-text); margin-bottom: 12px;">Capture New Idea</h3>
+                            <p style="color: var(--light-slate-gray);">Record your next big idea using voice, video, text, sketches, or images with full editing controls.</p>
+                            <button class="btn-primary" style="margin-top: 20px;">Start Capturing</button>
+                        </div>
+                        <div class="dashboard-card" onclick="showNotification('Opening Messages...')">
+                            <div class="card-icon" style="background: var(--success-green);">💬</div>
+                            <h3 style="color: var(--slate-text); margin-bottom: 12px;">Messages</h3>
+                            <p style="color: var(--light-slate-gray);"><span id="messageCount">7</span> new messages from investors, partners, and the admin team.</p>
+                            <button class="btn-primary" style="margin-top: 20px; background: var(--success-green);">View Messages</button>
+                        </div>
+                        <div class="dashboard-card" onclick="showIdeasBank()">
+                            <div class="card-icon" style="background: var(--accent-pink);">📈</div>
+                            <h3 style="color: var(--slate-text); margin-bottom: 12px;">Ideas Bank</h3>
+                            <p style="color: var(--light-slate-gray);">Explore <span id="ideasCount">2,847</span> innovative ideas from the global community across all vault tiers.</p>
+                            <button class="btn-primary" style="margin-top: 20px; background: var(--accent-pink);">Explore Vaults</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Idea Capture Screen -->
+    <div id="ideaCaptureScreen" class="screen">
+        <div class="main-content">
+            <div class="capture-interface">
+                <h2 style="text-align: center; color: var(--slate-text); margin-bottom: 30px;">Advanced Idea Capture & Editing</h2>
+                
+                <div class="capture-modes">
+                    <div class="capture-mode active" onclick="selectCaptureMode(this, 'voice')">
+                        <div style="font-size: 32px; margin-bottom: 12px;">🎤</div>
+                        <div><strong>Voice</strong></div>
+                        <div style="font-size: 11px; margin-top: 5px; color: var(--light-slate-gray);">Record/Play/Pause/Edit</div>
+                    </div>
+                    <div class="capture-mode" onclick="selectCaptureMode(this, 'video')">
+                        <div style="font-size: 32px; margin-bottom: 12px;">📹</div>
+                        <div><strong>Video</strong></div>
+                        <div style="font-size: 11px; margin-top: 5px; color: var(--light-slate-gray);">Record/Play/Seek/Edit</div>
+                    </div>
+                    <div class="capture-mode" onclick="selectCaptureMode(this, 'text')">
+                        <div style="font-size: 32px; margin-bottom: 12px;">📝</div>
+                        <div><strong>Text</strong></div>
+                        <div style="font-size: 11px; margin-top: 5px; color: var(--light-slate-gray);">Rich Editor + Code</div>
+                    </div>
+                    <div class="capture-mode" onclick="selectCaptureMode(this, 'image')">
+                        <div style="font-size: 32px; margin-bottom: 12px;">📷</div>
+                        <div><strong>Image</strong></div>
+                        <div style="font-size: 11px; margin-top: 5px; color: var(--light-slate-gray);">Capture + Merge</div>
+                    </div>
+                    <div class="capture-mode" onclick="selectCaptureMode(this, 'sketch')">
+                        <div style="font-size: 32px; margin-bottom: 12px;">✏️</div>
+                        <div><strong>Sketch</strong></div>
+                        <div style="font-size: 11px; margin-top: 5px; color: var(--light-slate-gray);">Draw + Edit Tools</div>
+                    </div>
+                </div>
+
+                <div class="capture-editor">
+                    <div class="editor-toolbar">
+                        <div class="editor-controls">
+                            <button class="control-btn" onclick="toggleRecording()">🔴 Record</button>
+                            <button class="control-btn">▶️ Play</button>
+                            <button class="control-btn">⏸️ Pause</button>
+                            <button class="control-btn">⏪ Rewind</button>
+                            <button class="control-btn">⏩ Fast Forward</button>
+                        </div>
+                        <div class="editor-controls">
+                            <button class="control-btn active">💾 Auto Save: ON</button>
+                            <button class="control-btn">📁 Manual Save</button>
+                            <button class="control-btn">🗑️ Delete</button>
+                        </div>
+                    </div>
+                    
+                    <div class="editor-content" id="editorContent">
+                        <div style="text-align: center; color: var(--light-slate-gray);">
+                            <div style="font-size: 64px; margin-bottom: 20px;">🎤</div>
+                            <div style="font-size: 18px; margin-bottom: 10px;">Voice Recording Ready</div>
+                            <div style="font-size: 14px;">Click Record to start capturing your voice idea</div>
+                        </div>
+                    </div>
+                    
+                    <div class="editor-status">
+                        <div style="font-size: 14px; color: var(--slate-text);">
+                            <span id="recordingTime">00:00:00</span> / <span id="maxTime">45:00:00</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill low" id="recordingProgress" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        <div style="font-size: 12px; color: var(--light-slate-gray);">
+                            <span id="tierInfo">Gold Tier</span> • Auto-save every 30s
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vault System Screen -->
+    <div id="vaultSystemScreen" class="screen">
+        <div class="main-content">
+            <div class="vaults-showcase">
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <h2 style="color: var(--slate-text); font-size: 32px; margin-bottom: 15px;">Ideas Bank Vault System</h2>
+                    <p style="color: var(--light-slate-gray); font-size: 18px;">Segmented vaults with distinctive features for each subscription tier</p>
+                </div>
+                
+                <div class="vaults-grid">
+                    <div class="vault-card" onclick="showNotification('Accessing Bronze Vault...')">
+                        <div class="vault-avatar bronze-avatar">🥉</div>
+                        <h3 style="color: var(--slate-text);">Bronze Vault</h3>
+                        <div class="vault-price">FREE</div>
+                        <p style="color: var(--light-slate-gray); margin: 15px 0;">Direct Upload - Content Scanned</p>
+                        <div class="vault-limits">
+                            <div>• 10min voice recording</div>
+                            <div>• 10min video recording</div>
+                            <div>• 3 pages of text</div>
+                            <div>• 5 images</div>
+                            <div>• 3 pages of sketches</div>
+                            <div style="margin-top: 10px; font-weight: 600; color: var(--accent-pink);">• Contact details automatically removed</div>
+                        </div>
+                    </div>
+
+                    <div class="vault-card" onclick="showNotification('Accessing Prince Vault (Silver Tier)...')">
+                        <div class="vault-avatar silver-avatar">👑</div>
+                        <h3 style="color: var(--slate-text);">Prince Vault</h3>
+                        <div class="vault-price">$50/month</div>
+                        <p style="color: var(--light-slate-gray); margin: 15px 0;">Silver Tier - Admin Moderated</p>
+                        <div class="vault-limits">
+                            <div>• 20min voice recording</div>
+                            <div>• 20min video recording</div>
+                            <div>• 7 pages of text</div>
+                            <div>• 10 images</div>
+                            <div>• 3 pages of sketches</div>
+                            <div style="margin-top: 10px; font-weight: 600; color: var(--success-green);">• Admin review & processing</div>
+                        </div>
+                    </div>
+
+                    <div class="vault-card" onclick="showNotification('Accessing Queens Vault (Gold Tier)...')">
+                        <div class="vault-avatar gold-avatar">👸</div>
+                        <h3 style="color: var(--slate-text);">Queens Vault</h3>
+                        <div class="vault-price">$100/month</div>
+                        <p style="color: var(--light-slate-gray); margin: 15px 0;">Gold Tier - Priority Processing</p>
+                        <div class="vault-limits">
+                            <div>• 45min voice recording</div>
+                            <div>• 45min video recording</div>
+                            <div>• 12 pages of text</div>
+                            <div>• 15 images</div>
+                            <div>• 5 pages of sketches</div>
+                            <div style="margin-top: 10px; font-weight: 600; color: var(--primary-blue);">• Priority admin processing</div>
+                        </div>
+                    </div>
+
+                    <div class="vault-card" onclick="showNotification('Accessing Kings Vault (Diamond Tier)...')">
+                        <div class="vault-avatar diamond-avatar">🤴</div>
+                        <h3 style="color: var(--slate-text);">Kings Vault</h3>
+                        <div class="vault-price">$500/month</div>
+                        <p style="color: var(--light-slate-gray); margin: 15px 0;">Diamond Tier - Unlimited</p>
+                        <div class="vault-limits">
+                            <div>• ∞ Unlimited voice recording</div>
+                            <div>• ∞ Unlimited video recording</div>
+                            <div>• ∞ Unlimited text pages</div>
+                            <div>• ∞ Unlimited images</div>
+                            <div>• ∞ Unlimited sketches</div>
+                            <div style="margin-top: 10px; font-weight: 600; color: var(--accent-pink);">• Premium admin processing</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel Screen -->
+    <div id="adminPanelScreen" class="screen">
+        <div class="main-content">
+            <div class="admin-dashboard">
+                <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 40px;">
+                    <h2 style="color: var(--slate-text); font-size: 32px;">Admin Processing Center</h2>
+                    <div class="status-badge" style="background: var(--accent-pink);">Administrator</div>
+                </div>
+                
+                <div class="admin-grid">
+                    <div class="admin-panel">
+                        <h3 style="margin-bottom: 20px; color: var(--slate-text);">Pending Deposits Queue</h3>
+                        <div class="deposits-queue">
+                            <div class="deposit-item" onclick="showNotification('Processing Smart Agriculture IoT System...')">
+                                <div>
+                                    <div style="font-weight: 600; color: var(--slate-text);">Smart Agriculture IoT System</div>
+                                    <div style="font-size: 12px; color: var(--light-slate-gray);">John Doe • Video + Text • 5 mins ago</div>
+                                </div>
+                                <div>
+                                    <span class="deposit-badge prince-badge">Prince Deposit</span>
+                                </div>
+                            </div>
+                            
+                            <div class="deposit-item" onclick="showNotification('Processing Blockchain Payment Gateway...')">
+                                <div>
+                                    <div style="font-weight: 600; color: var(--slate-text);">Blockchain Payment Gateway</div>
+                                    <div style="font-size: 12px; color: var(--light-slate-gray);">Sarah Smith • Voice + Sketch • 12 mins ago</div>
+                                </div>
+                                <div>
+                                    <span class="deposit-badge queens-badge">Queens Deposit</span>
+                                </div>
+                            </div>
+                            
+                            <div class="deposit-item" onclick="showNotification('Processing AI-Powered Healthcare Platform...')">
+                                <div>
+                                    <div style="font-weight: 600; color: var(--slate-text);">AI-Powered Healthcare Platform</div>
+                                    <div style="font-size: 12px; color: var(--light-slate-gray);">Mike Johnson • Full Suite • 1 hour ago</div>
+                                </div>
+                                <div>
+                                    <span class="deposit-badge kings-badge">Kings Deposit</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="admin-panel">
+                        <h3 style="margin-bottom: 20px; color: var(--slate-text);">IP Protection Metadata</h3>
+                        <div class="metadata-display">
+                            <div><strong>IDEA_ID:</strong> INF_2025_001247</div>
+                            <div><strong>TIMESTAMP:</strong> 2025-05-26T14:32:15.847Z</div>
+                            <div><strong>USER_TIER:</strong> GOLD</div>
+                            <div><strong>SUBMISSION_TYPE:</strong> VIDEO + TEXT</div>
+                            <div><strong>HASH_SIGNATURE:</strong> 7a8b9c2d3e4f5g6h</div>
+                            <div><strong>BLOCKCHAIN_REF:</strong> 0x89abc...def123</div>
+                            <div><strong>CONTENT_SCAN:</strong> PASSED</div>
+                            <div><strong>CONTACT_FILTER:</strong> APPLIED</div>
+                            <div><strong>PROCESSING_STATUS:</strong> PENDING_REVIEW</div>
+                            <div><strong>ASSIGNED_ADMIN:</strong> admin_sarah_001</div>
+                        </div>
+                        
+                        <div style="margin-top: 20px; display: flex; gap: 15px;">
+                            <button class="btn-primary" onclick="showNotification('Idea approved and processed successfully!')">Approve & Process</button>
+                            <button style="background: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600;" onclick="showNotification('Idea rejected and returned to user.')">Reject</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-panel" style="margin-top: 30px;">
+                    <h3 style="margin-bottom: 20px; color: var(--slate-text);">Content Scanning Results</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                        <div style="text-align: center; padding: 20px; background: #f0f8ff; border-radius: 10px; border: 1px solid var(--slate-border);">
+                            <div style="font-size: 32px; margin-bottom: 10px;">📞</div>
+                            <div style="font-weight: 600; color: var(--slate-text);">Phone Numbers</div>
+                            <div style="color: var(--success-green); font-size: 14px;">3 Removed</div>
+                        </div>
+                        <div style="text-align: center; padding: 20px; background: #f0f8ff; border-radius: 10px; border: 1px solid var(--slate-border);">
+                            <div style="font-size: 32px; margin-bottom: 10px;">📧</div>
+                            <div style="font-weight: 600; color: var(--slate-text);">Email Addresses</div>
+                            <div style="color: var(--success-green); font-size: 14px;">2 Removed</div>
+                        </div>
+                        <div style="text-align: center; padding: 20px; background: #f0f8ff; border-radius: 10px; border: 1px solid var(--slate-border);">
+                            <div style="font-size: 32px; margin-bottom: 10px;">🌐</div>
+                            <div style="font-weight: 600; color: var(--slate-text);">Social Media</div>
+                            <div style="color: var(--success-green); font-size: 14px;">1 Removed</div>
+                        </div>
+                        <div style="text-align: center; padding: 20px; background: #f0f8ff; border-radius: 10px; border: 1px solid var(--slate-border);">
+                            <div style="font-size: 32px; margin-bottom: 10px;">🔒</div>
+                            <div style="font-weight: 600; color: var(--slate-text);">IP Protection</div>
+                            <div style="color: var(--success-green); font-size: 14px;">Applied</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ideas Bank Screen -->
+    <div id="ideasBankScreen" class="screen">
+        <div class="main-content">
+            <div class="ideas-bank">
+                <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 40px;">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 128 128'%3E%3Ccircle cx='64' cy='64' r='60' fill='%231842B6'/%3E%3Ctext x='64' y='75' text-anchor='middle' fill='white' font-size='36' font-weight='bold'%3EIF%3C/text%3E%3C/svg%3E" alt="IntelliForge" style="width: 50px; height: 50px; border-radius: 50%;">
+                    <h2 style="color: var(--slate-text); font-size: 32px;">Ideas Bank</h2>
+                </div>
+                <div class="search-filters">
+                    <input type="text" class="search-input" placeholder="Search innovative ideas..." oninput="filterIdeas(this.value)">
+                    <select class="filter-select" onchange="filterByIndustry(this.value)">
+                        <option value="">All Industries</option>
+                        <option value="technology">Technology</option>
+                        <option value="healthcare">Healthcare</option>
+                        <option value="finance">Finance</option>
+                        <option value="education">Education</option>
+                    </select>
+                    <select class="filter-select" onchange="filterByRegion(this.value)">
+                        <option value="">All Regions</option>
+                        <option value="north-america">North America</option>
+                        <option value="europe">Europe</option>
+                        <option value="asia">Asia</option>
+                        <option value="africa">Africa</option>
+                    </select>
+                </div>
+                <div id="ideasGrid" class="ideas-grid">
+                    <!-- Ideas will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentScreen = 'splash';
+        let currentUserType = 'client';
+        let currentCaptureMode = 'voice';
+        let isRecording = false;
+        let recordingTime = 0;
+        let recordingInterval = null;
+        
+        // User tier data
+        const tierLimits = {
+            bronze: { voice: 10, video: 10, text: 3, images: 5, sketches: 3, price: 0 },
+            silver: { voice: 20, video: 20, text: 7, images: 10, sketches: 3, price: 50 },
+            gold: { voice: 45, video: 45, text: 12, images: 15, sketches: 5, price: 100 },
+            diamond: { voice: Infinity, video: Infinity, text: Infinity, images: Infinity, sketches: Infinity, price: 500 }
+        };
+
+        let currentTier = 'gold';
+        let usageData = {
+            voice: 28, video: 15, text: 7, images: 11, sketches: 2
+        };
+        
+        // Sample ideas data
+        const sampleIdeas = [
+            {
+                id: 1,
+                title: 'Smart Education Platform',
+                description: 'An AI-driven personalized learning system that adapts to individual student needs and learning patterns.',
+                industry: 'technology',
+                region: 'north-america',
+                rating: 4.8,
+                thumbnail: 'AI-Powered Learning'
+            },
+            {
+                id: 2,
+                title: 'Solar-Powered IoT Network',
+                description: 'Self-sustaining IoT sensors powered entirely by integrated solar cells for environmental monitoring.',
+                industry: 'technology',
+                region: 'europe',
+                rating: 4.6,
+                thumbnail: 'Sustainable Energy'
+            },
+            {
+                id: 3,
+                title: 'Remote Health Monitor',
+                description: 'Wearable device for continuous health monitoring with AI diagnosis and emergency response.',
+                industry: 'healthcare',
+                region: 'north-america',
+                rating: 4.9,
+                thumbnail: 'HealthTech Innovation'
+            },
+            {
+                id: 4,
+                title: 'Crypto Payment Gateway',
+                description: 'Seamless cryptocurrency integration for e-commerce platforms with instant conversion.',
+                industry: 'finance',
+                region: 'asia',
+                rating: 4.7,
+                thumbnail: 'Financial Innovation'
+            },
+            {
+                id: 5,
+                title: 'Virtual Reality Classroom',
+                description: 'Immersive VR learning environments for remote education and collaborative learning.',
+                industry: 'education',
+                region: 'europe',
+                rating: 4.5,
+                thumbnail: 'Educational Technology'
+            },
+            {
+                id: 6,
+                title: 'Smart Agriculture System',
+                description: 'IoT-based farming optimization with AI crop analysis and automated irrigation.',
+                industry: 'agriculture',
+                region: 'africa',
+                rating: 4.4,
+                thumbnail: 'AgriTech Solution'
+            }
+        ];
+
+        // Screen navigation functions
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+            currentScreen = screenId;
+            
+            const backBtn = document.getElementById('backBtn');
+            if (screenId === 'splashScreen') {
+                backBtn.style.display = 'none';
+            } else {
+                backBtn.style.display = 'block';
+            }
+        }
+
+        function showLogin() {
+            showScreen('loginScreen');
+        }
+
+        function showDashboard() {
+            showScreen('dashboardScreen');
+            updateUsageDisplay();
+        }
+
+        function showIdeaCapture() {
+            showScreen('ideaCaptureScreen');
+            updateCaptureInterface();
+        }
+
+        function showIdeasBank() {
+            showScreen('ideasBankScreen');
+            populateIdeas();
+        }
+
+        function showVaultSystem() {
+            showScreen('vaultSystemScreen');
+        }
+
+        function showAdminPanel() {
+            showScreen('adminPanelScreen');
+        }
+
+        // Back button functionality
+        document.getElementById('backBtn').addEventListener('click', function() {
+            if (currentScreen === 'loginScreen') {
+                showScreen('splashScreen');
+            } else {
+                showDashboard();
+            }
+        });
+
+        // User type selection
+        function selectUserType(element, type) {
+            document.querySelectorAll('.user-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            element.classList.add('active');
+            currentUserType = type;
+            
+            const statusBadge = document.getElementById('statusBadge');
+            const userName = document.getElementById('userName');
+            
+            switch(type) {
+                case 'client':
+                    statusBadge.textContent = 'Gold Member';
+                    userName.textContent = 'John';
+                    currentTier = 'gold';
+                    break;
+                case 'investor':
+                    statusBadge.textContent = 'Premium Investor';
+                    userName.textContent = 'Sarah';
+                    currentTier = 'diamond';
+                    break;
+                case 'partner':
+                    statusBadge.textContent = 'Verified Partner';
+                    userName.textContent = 'Mike';
+                    currentTier = 'gold';
+                    break;
+                case 'guest':
+                    statusBadge.textContent = 'Guest User';
+                    userName.textContent = 'Guest';
+                    currentTier = 'bronze';
+                    break;
+                case 'admin':
+                    statusBadge.textContent = 'Administrator';
+                    userName.textContent = 'Admin';
+                    currentTier = 'diamond';
+                    break;
+            }
+        }
+
+        // Login function
+        function login(event) {
+            event.preventDefault();
+            showNotification('Login successful! Welcome to IntelliForge Enterprise Platform.');
+            setTimeout(() => {
+                showDashboard();
+            }, 1500);
+        }
+
+        // Dashboard view switching
+        function switchDashboardView(view) {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.nav-item').classList.add('active');
+            showNotification(`Switched to ${view} view`);
+        }
+
+        // Usage tracking functions
+        function updateUsageDisplay() {
+            const limits = tierLimits[currentTier];
+            
+            // Update tier title
+            document.getElementById('tierTitle').textContent = `${currentTier.charAt(0).toUpperCase() + currentTier.slice(1)} Tier Usage Limits`;
+            
+            // Update usage displays
+            document.getElementById('voiceUsage').textContent = `${usageData.voice}/${limits.voice === Infinity ? '∞' : limits.voice} min`;
+            document.getElementById('videoUsage').textContent = `${usageData.video}/${limits.video === Infinity ? '∞' : limits.video} min`;
+            document.getElementById('textUsage').textContent = `${usageData.text}/${limits.text === Infinity ? '∞' : limits.text} pages`;
+            document.getElementById('imageUsage').textContent = `${usageData.images}/${limits.images === Infinity ? '∞' : limits.images} images`;
+            document.getElementById('sketchUsage').textContent = `${usageData.sketches}/${limits.sketches === Infinity ? '∞' : limits.sketches} pages`;
+            
+            // Update progress bars
+            updateProgressBar('voiceFill', usageData.voice, limits.voice);
+            updateProgressBar('videoFill', usageData.video, limits.video);
+            updateProgressBar('textFill', usageData.text, limits.text);
+            updateProgressBar('imageFill', usageData.images, limits.images);
+            updateProgressBar('sketchFill', usageData.sketches, limits.sketches);
+        }
+
+        function updateProgressBar(elementId, current, max) {
+            const element = document.getElementById(elementId);
+            let percentage = max === Infinity ? 0 : (current / max) * 100;
+            percentage = Math.min(percentage, 100);
+            
+            element.style.width = `${percentage}%`;
+            element.className = 'usage-fill ' + (percentage < 50 ? 'low' : percentage < 80 ? 'medium' : 'high');
+        }
+
+        function checkUsageLimit(type, increment = 1) {
+            const limits = tierLimits[currentTier];
+            const currentUsage = usageData[type];
+            
+            if (limits[type] !== Infinity && currentUsage + increment > limits[type]) {
+                showUpgradeModal();
+                return false;
+            }
+            
+            usageData[type] += increment;
+            updateUsageDisplay();
+            return true;
+        }
+
+        // Capture mode functions
+        function selectCaptureMode(element, mode) {
+            document.querySelectorAll('.capture-mode').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            element.classList.add('active');
+            currentCaptureMode = mode;
+            updateCaptureInterface();
+        }
+
+        function updateCaptureInterface() {
+            const editorContent = document.getElementById('editorContent');
+            const maxTime = document.getElementById('maxTime');
+            const tierInfo = document.getElementById('tierInfo');
+            const limits = tierLimits[currentTier];
+            
+            tierInfo.textContent = `${currentTier.charAt(0).toUpperCase() + currentTier.slice(1)} Tier`;
+            
+            switch(currentCaptureMode) {
+                case 'voice':
+                    editorContent.innerHTML = `
+                        <div style="text-align: center; color: var(--light-slate-gray);">
+                            <div style="font-size: 64px; margin-bottom: 20px;">🎤</div>
+                            <div style="font-size: 18px; margin-bottom: 10px;">Voice Recording Ready</div>
+                            <div style="font-size: 14px;">Advanced voice editing with play, pause, rewind, and fast forward</div>
+                        </div>
+                    `;
+                    maxTime.textContent = limits.voice === Infinity ? '∞' : `${limits.voice}:00:00`;
+                    break;
+                case 'video':
+                    editorContent.innerHTML = `
+                        <div style="text-align: center; color: var(--light-slate-gray);">
+                            <div style="font-size: 64px; margin-bottom: 20px;">📹</div>
+                            <div style="font-size: 18px; margin-bottom: 10px;">Video Recording Ready</div>
+                            <div style="font-size: 14px;">Full video editing with timeline scrubbing and seek functions</div>
+                        </div>
+                    `;
+                    maxTime.textContent = limits.video === Infinity ? '∞' : `${limits.video}:00:00`;
+                    break;
+                case 'text':
+                    editorContent.innerHTML = `
+                        <div style="width: 100%; height: 300px; border: 2px solid var(--slate-border); border-radius: 10px; padding: 20px;">
+                            <div style="font-size: 16px; color: var(--slate-text); margin-bottom: 15px; font-weight: 600;">Rich Text Editor with Code Support</div>
+                            <textarea style="width: 100%; height: 200px; border: 1px solid var(--slate-border); border-radius: 5px; padding: 10px; font-family: inherit;" placeholder="Write your innovative idea here... Supports markdown, code blocks, and rich formatting."></textarea>
+                            <div style="margin-top: 10px; display: flex; gap: 10px;">
+                                <button class="control-btn">Bold</button>
+                                <button class="control-btn">Italic</button>
+                                <button class="control-btn">Code</button>
+                                <button class="control-btn">List</button>
+                            </div>
+                        </div>
+                    `;
+                    maxTime.textContent = limits.text === Infinity ? '∞ pages' : `${limits.text} pages`;
+                    break;
+                case 'image':
+                    editorContent.innerHTML = `
+                        <div style="text-align: center; color: var(--light-slate-gray);">
+                            <div style="font-size: 64px; margin-bottom: 20px;">📷</div>
+                            <div style="font-size: 18px; margin-bottom: 10px;">Image Capture Ready</div>
+                            <div style="font-size: 14px;">Capture images and merge multiple images together</div>
+                            <div style="margin-top: 20px;">
+                                <button class="control-btn" style="margin: 0 10px;">📸 Take Photo</button>
+                                <button class="control-btn" style="margin: 0 10px;">📁 Upload Image</button>
+                                <button class="control-btn" style="margin: 0 10px;">🔗 Merge Images</button>
+                            </div>
+                        </div>
+                    `;
+                    maxTime.textContent = limits.images === Infinity ? '∞ images' : `${limits.images} images`;
+                    break;
+                case 'sketch':
+                    editorContent.innerHTML = `
+                        <div style="text-align: center; color: var(--light-slate-gray);">
+                            <div style="font-size: 64px; margin-bottom: 20px;">✏️</div>
+                            <div style="font-size: 18px; margin-bottom: 10px;">Sketch Pad Ready</div>
+                            <div style="font-size: 14px;">Full drawing tools with layers, shapes, and editing capabilities</div>
+                            <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
+                                <button class="control-btn">🖊️ Pen</button>
+                                <button class="control-btn">🖌️ Brush</button>
+                                <button class="control-btn">⭕ Circle</button>
+                                <button class="control-btn">⬜ Rectangle</button>
+                                <button class="control-btn">🎨 Colors</button>
+                            </div>
+                        </div>
+                    `;
+                    maxTime.textContent = limits.sketches === Infinity ? '∞ pages' : `${limits.sketches} pages`;
+                    break;
+            }
+        }
+
+        function toggleRecording() {
+            if (!isRecording) {
+                if (!checkUsageLimit(currentCaptureMode === 'voice' ? 'voice' : 'video', 1)) {
+                    return;
+                }
+                
+                startRecording();
+            } else {
+                stopRecording();
+            }
+        }
+
+        function startRecording() {
+            isRecording = true;
+            recordingTime = 0;
+            
+            const recordBtn = document.querySelector('.control-btn');
+            recordBtn.textContent = '⏹️ Stop Recording';
+            recordBtn.style.background = '#dc3545';
+            recordBtn.style.color = 'white';
+            
+            const editorContent = document.getElementById('editorContent');
+            editorContent.innerHTML = `
+                <div style="text-align: center; color: var(--slate-text);">
+                    <div style="font-size: 64px; margin-bottom: 20px; color: #dc3545;">🔴</div>
+                    <div style="font-size: 24px; margin-bottom: 10px; font-weight: 600;">Recording in Progress</div>
+                    <div style="font-size: 18px; color: var(--light-slate-gray);">High-quality ${currentCaptureMode} capture active</div>
+                </div>
+            `;
+            
+            recordingInterval = setInterval(updateRecordingTime, 1000);
+            showNotification(`${currentCaptureMode.charAt(0).toUpperCase() + currentCaptureMode.slice(1)} recording started!`);
+        }
+
+        function stopRecording() {
+            isRecording = false;
+            clearInterval(recordingInterval);
+            
+            const recordBtn = document.querySelector('.control-btn');
+            recordBtn.textContent = '🔴 Record';
+            recordBtn.style.background = '';
+            recordBtn.style.color = '';
+            
+            updateCaptureInterface();
+            showNotification('Recording completed and auto-saved!');
+        }
+
+        function updateRecordingTime() {
+            recordingTime++;
+            const minutes = Math.floor(recordingTime / 60);
+            const seconds = recordingTime % 60;
+            const timeStr = `00:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            document.getElementById('recordingTime').textContent = timeStr;
+            
+            const limits = tierLimits[currentTier];
+            const maxSeconds = limits[currentCaptureMode] === Infinity ? Infinity : limits[currentCaptureMode] * 60;
+            const percentage = maxSeconds === Infinity ? 0 : (recordingTime / maxSeconds) * 100;
+            
+            document.getElementById('recordingProgress').style.width = `${Math.min(percentage, 100)}%`;
+        }
+
+        // Upgrade modal functions
+        function showUpgradeModal() {
+            document.getElementById('currentTier').textContent = currentTier.charAt(0).toUpperCase() + currentTier.slice(1);
+            document.getElementById('upgradeModal').classList.add('show');
+        }
+
+        function closeUpgradeModal() {
+            document.getElementById('upgradeModal').classList.remove('show');
+        }
+
+        function upgradeAccount() {
+            closeUpgradeModal();
+            showNotification('Redirecting to upgrade page...');
+        }
+
+        // Ideas Bank functions
+        function populateIdeas(filteredIdeas = sampleIdeas) {
+            const ideasGrid = document.getElementById('ideasGrid');
+            ideasGrid.innerHTML = '';
+            
+            filteredIdeas.forEach(idea => {
+                const ideaCard = document.createElement('div');
+                ideaCard.className = 'idea-card';
+                ideaCard.innerHTML = `
+                    <div class="idea-thumbnail">${idea.thumbnail}</div>
+                    <div class="idea-content">
+                        <h3 style="color: var(--slate-text);">${idea.title}</h3>
+                        <p style="color: var(--light-slate-gray);">${idea.description}</p>
+                        <div class="idea-meta">
+                            <span>${idea.industry} • ${idea.region}</span>
+                            <span>⭐ ${idea.rating}/5</span>
+                        </div>
+                    </div>
+                `;
+                ideaCard.addEventListener('click', () => {
+                    showNotification(`Viewing details for: ${idea.title}`);
+                });
+                ideasGrid.appendChild(ideaCard);
+            });
+        }
+
+        function filterIdeas(searchTerm = '') {
+            const filtered = sampleIdeas.filter(idea => 
+                idea.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                idea.description.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            populateIdeas(filtered);
+        }
+
+        function filterByIndustry(industry) {
+            if (!industry) {
+                populateIdeas();
+                return;
+            }
+            const filtered = sampleIdeas.filter(idea => idea.industry === industry);
+            populateIdeas(filtered);
+        }
+
+        function filterByRegion(region) {
+            if (!region) {
+                populateIdeas();
+                return;
+            }
+            const filtered = sampleIdeas.filter(idea => idea.region === region);
+            populateIdeas(filtered);
+        }
+
+        // Notification system
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-advance from splash screen after 6 seconds
+            setTimeout(() => {
+                if (currentScreen === 'splash') {
+                    showLogin();
+                }
+            }, 6000);
+            
+            updateUsageDisplay();
+        });
+    </script>
+</body>
+</html>
